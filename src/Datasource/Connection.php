@@ -58,7 +58,8 @@ class Connection implements ConnectionInterface
 
     /**
      * @param \Psr\SimpleCache\CacheInterface $cacher The cacher instance to use for query caching.
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setCacher(CacheInterface $cacher): ConnectionInterface
     {

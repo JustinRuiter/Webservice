@@ -157,7 +157,8 @@ class Schema implements SchemaInterface
      *
      * @param string $name The name of the column
      * @param array|string $attrs The attributes for the column.
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function addColumn(string $name, array|string $attrs): Schema
     {
@@ -219,7 +220,8 @@ class Schema implements SchemaInterface
      * If the column is not defined in the table, no error will be raised.
      *
      * @param string $name The name of the column
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function removeColumn(string $name): Schema
     {
@@ -233,7 +235,8 @@ class Schema implements SchemaInterface
      *
      * @param string $name Column name
      * @param string $type Type to set for the column
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setColumnType(string $name, string $type): Schema
     {
@@ -358,7 +361,8 @@ class Schema implements SchemaInterface
      * Set the schema options for an endpoint
      *
      * @param array<string, mixed> $options Array of options to set
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setOptions(array $options): Schema
     {

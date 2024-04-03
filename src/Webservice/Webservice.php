@@ -76,7 +76,7 @@ abstract class Webservice implements WebserviceInterface
      * Set the webservice driver and return the instance for chaining
      *
      * @param \Muffin\Webservice\Webservice\Driver\AbstractDriver $driver Instance of the driver
-     * @return $this
+     * @return self
      */
     public function setDriver(AbstractDriver $driver): Webservice
     {
@@ -103,7 +103,7 @@ abstract class Webservice implements WebserviceInterface
      * Set the endpoint path this webservice uses
      *
      * @param string $endpoint Endpoint path
-     * @return $this
+     * @return self
      */
     public function setEndpoint(string $endpoint): Webservice
     {
@@ -209,8 +209,6 @@ abstract class Webservice implements WebserviceInterface
      * @param \Muffin\Webservice\Datasource\Query $query The query to execute
      * @param array $options The options to use
      * @return \Muffin\Webservice\Model\Resource|\Muffin\Webservice\Datasource\ResultSet|int|bool
-     * @psalm-suppress NullableReturnStatement
-     * @psalm-suppress InvalidNullableReturnType
      */
     protected function _executeQuery(Query $query, array $options = []): bool|int|Resource|ResultSet
     {
