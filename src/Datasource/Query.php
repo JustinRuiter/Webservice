@@ -231,7 +231,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     /**
      * @param \Closure|array|string $fields The field configuration for the order by clause
      * @param bool $overwrite Whether to overwrite the existing conditions
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function orderBy(Closure|array|string $fields, bool $overwrite = false): Query
     {
@@ -374,7 +375,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Set the default repository object that will be used by this query.
      *
      * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use.
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setRepository(RepositoryInterface $repository): Query
     {
@@ -399,7 +401,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     /**
      * Mark the query as create
      *
-     * @return $this
+     * @return self
      */
     public function create(): Query
     {
@@ -411,7 +413,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     /**
      * Mark the query as read
      *
-     * @return $this
+     * @return self
      */
     public function read(): Query
     {
@@ -423,7 +425,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     /**
      * Mark the query as update
      *
-     * @return $this
+     * @return self
      */
     public function update(): Query
     {
@@ -435,7 +437,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     /**
      * Mark the query as delete
      *
-     * @return $this
+     * @return self
      */
     public function delete(): Query
     {
@@ -468,8 +470,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Set the endpoint to be used
      *
      * @param \Muffin\Webservice\Model\Endpoint $endpoint The endpoint to use
-     * @return $this
-     * @psalm-suppress LessSpecificReturnStatement
+     * @return self
      */
     public function setEndpoint(Endpoint $endpoint): Query
     {
@@ -482,7 +483,6 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Set the endpoint to be used
      *
      * @return \Muffin\Webservice\Model\Endpoint
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function getEndpoint(): Endpoint
     {
@@ -493,7 +493,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Set the webservice to be used
      *
      * @param \Muffin\Webservice\Webservice\WebserviceInterface $webservice The webservice to use
-     * @return $this
+     * @return self
      */
     public function setWebservice(WebserviceInterface $webservice): Query
     {
@@ -549,8 +549,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * @param \Closure|array|string|null $conditions The list of conditions.
      * @param array $types Not used, required to comply with QueryInterface.
      * @param bool $overwrite Whether to replace previous queries.
-     * @return $this
-     * @psalm-suppress ImplementedReturnTypeMismatch Not the nicest solution, but wishing to keep the functionality backwards compatible
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function where(
         Closure|array|string|null $conditions = null,
@@ -570,7 +570,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      *
      * @param array|string $conditions The conditions to add with AND.
      * @param array $types associative array of type names used to bind values to query
-     * @return $this
+     * @return self
      * @see \Cake\Database\Query::where()
      * @see \Cake\Database\Type
      * @psalm-suppress PossiblyInvalidArgument
@@ -586,7 +586,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Charge this query's action
      *
      * @param int $action Action to use
-     * @return $this
+     * @return self
      */
     public function action(int $action): Query
     {
@@ -607,7 +607,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * @param int $num The page number you want.
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function page(int $num, ?int $limit = null): Query
     {
@@ -637,7 +638,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * ```
      *
      * @param ?int $limit number of records to be returned
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function limit(?int $limit): Query
     {
@@ -650,7 +652,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Set fields to save in resources
      *
      * @param \Closure|array|string $fields The field to set
-     * @return $this
+     * @return self
      */
     public function set(Closure|array|string $fields): Query
     {
@@ -688,7 +690,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $fields fields to be added to the list
      * @param bool $overwrite whether to reset order with field list or not
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function order(array|ExpressionInterface|Closure|string $fields, bool $overwrite = false): Query
     {
@@ -880,7 +883,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|float|int $fields The list of fields to select from _source.
      * @param bool $overwrite Whether or not to replace previous selections.
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function select(ExpressionInterface|Closure|array|string|int|float $fields, bool $overwrite = false): Query
     {
@@ -957,7 +961,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * @param \Closure|null $mapper The mapper function
      * @param \Closure|null $reducer The reducing function
      * @param bool $overwrite Set to true to overwrite existing map + reduce functions.
-     * @return $this
+     * @return self
      * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
      */
     public function mapReduce(?Closure $mapper = null, ?Closure $reducer = null, bool $overwrite = false): Query
@@ -1013,7 +1017,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * passed, the current configured query `_eagerLoaded` value is returned.
      *
      * @param bool $value Whether to eager load.
-     * @return $this
+     * @return self
      */
     public function eagerLoaded(bool $value): Query
     {
@@ -1062,7 +1066,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      *
      * @param \Closure|null $formatter The formatting function
      * @param int|bool $mode Whether to overwrite, append or prepend the formatter.
-     * @return $this
+     * @return self
      * @throws \InvalidArgumentException
      */
     public function formatResults(?Closure $formatter = null, int|bool $mode = self::APPEND): Query

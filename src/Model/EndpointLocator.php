@@ -23,8 +23,8 @@ class EndpointLocator extends AbstractLocator
      * @param string $alias The alias to set.
      * @param \Muffin\Webservice\Model\Endpoint $repository The repository to set.
      * @return \Muffin\Webservice\Model\Endpoint
-     * @psalm-suppress MoreSpecificImplementedParamType
      * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress MoreSpecificImplementedParamType Not a nice solution, but in this plugin, we only support Endpoints
      */
     public function set(string $alias, RepositoryInterface $repository): Endpoint
     {

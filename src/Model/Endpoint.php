@@ -241,7 +241,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Set the name of this endpoint
      *
      * @param string $name The name for this endpoint instance
-     * @return $this
+     * @return self
      */
     public function setName(string $name): Endpoint
     {
@@ -291,7 +291,8 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Sets the table registry key used to create this table instance.
      *
      * @param string $registryAlias The key used to access this object.
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setRegistryAlias(string $registryAlias): Endpoint
     {
@@ -318,7 +319,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Sets the connection driver.
      *
      * @param \Muffin\Webservice\Datasource\Connection $connection Connection instance
-     * @return $this
+     * @return self
      */
     public function setConnection(Connection $connection): Endpoint
     {
@@ -347,7 +348,8 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * out of it and used as the schema for this endpoint.
      *
      * @param \Muffin\Webservice\Datasource\Schema|array $schema Either an array of fields and config, or a schema object
-     * @return $this
+     * @return self
+     * @throws \Exception
      */
     public function setSchema(Schema|array $schema): Endpoint
     {
@@ -364,6 +366,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Returns the schema endpoint object describing this endpoint's properties.
      *
      * @return \Muffin\Webservice\Datasource\Schema|null
+     * @throws \Exception
      */
     public function getSchema(): ?Schema
     {
@@ -394,7 +397,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Returns the current endpoint
      *
      * @param list<string>|string|null $key sets a new name to be used as primary key
-     * @return $this
+     * @return self
      */
     public function setPrimaryKey(string|array|null $key): Endpoint
     {
@@ -427,7 +430,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Sets the endpoint display field
      *
      * @param array<string>|string $field The new field to use as the display field
-     * @return $this
+     * @return self
      */
     public function setDisplayField(string|array $field): Endpoint
     {
@@ -464,7 +467,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Set the resource class name used to hydrate resources for this endpoint
      *
      * @param string $name Name of the class to use
-     * @return $this
+     * @return self
      * @throws \Muffin\Webservice\Model\Exception\MissingResourceClassException If the resource class specified does not exist
      */
     public function setResourceClass(string $name): Endpoint
@@ -515,7 +518,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Set a new inflection method
      *
      * @param string $method The name of the inflection method
-     * @return $this
+     * @return self
      */
     public function setInflectionMethod(string $method): Endpoint
     {
@@ -539,7 +542,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      *
      * @param string $alias Alias for the webservice
      * @param \Muffin\Webservice\Webservice\WebserviceInterface $webservice The webservice instance
-     * @return $this
+     * @return self
      * @throws \Muffin\Webservice\Webservice\Exception\UnexpectedDriverException When no driver exists for the endpoint
      */
     public function setWebservice(string $alias, WebserviceInterface $webservice): Endpoint
@@ -899,8 +902,6 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * @return int Count of affected rows.
      * @throws \Exception When the delete action could not be executed
      * @see \Muffin\Webservice\Endpoint::delete()
-     * @psalm-suppress InvalidReturnStatement
-     * @psalm-suppress InvalidReturnType
      */
     public function deleteAll(mixed $conditions): int
     {
@@ -1339,7 +1340,8 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * Set the endpoint alias
      *
      * @param string $alias Alias for this endpoint
-     * @return $this
+     * @return self
+     * @psalm-suppress LessSpecificImplementedReturnType
      */
     public function setAlias(string $alias): Endpoint
     {
