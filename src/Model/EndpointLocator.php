@@ -36,12 +36,19 @@ class EndpointLocator extends AbstractLocator
      *
      * @param string $alias The alias name you want to get.
      * @param array $options The options you want to build the endpoint with.
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return \Muffin\Webservice\Model\Endpoint
      * @throws \RuntimeException If the registry alias is already in use.
      */
-    public function get(string $alias, array $options = []): RepositoryInterface
+    public function get(string $alias, array $options = []): Endpoint
     {
-        return parent::get($alias, $options);
+        $parentRes = parent::get($alias, $options);
+
+        assert(
+            $parentRes instanceof Endpoint,
+            'The repository found is not of type Endpoint, but a different type implementing RepositoryInterface'
+        );
+
+        return $parentRes;
     }
 
     /**
@@ -49,9 +56,9 @@ class EndpointLocator extends AbstractLocator
      *
      * @param string $alias Endpoint alias.
      * @param array $options The alias to check for.
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return \Muffin\Webservice\Model\Endpoint
      */
-    protected function createInstance(string $alias, array $options): RepositoryInterface
+    protected function createInstance(string $alias, array $options): Endpoint
     {
         [, $classAlias] = pluginSplit($alias);
         $options = ['alias' => $classAlias] + $options;

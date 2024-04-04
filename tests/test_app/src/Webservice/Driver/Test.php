@@ -7,7 +7,7 @@ use Muffin\Webservice\Webservice\Driver\AbstractDriver;
 use Muffin\Webservice\Webservice\WebserviceInterface;
 use TestApp\Webservice\EndpointTestWebservice;
 
-class TestDriver extends AbstractDriver
+class Test extends AbstractDriver
 {
     /**
      * Initialize is used to easily extend the constructor.

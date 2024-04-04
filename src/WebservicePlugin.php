@@ -8,7 +8,7 @@ use Cake\Core\PluginApplicationInterface;
 use Cake\Datasource\FactoryLocator;
 use Muffin\Webservice\Model\EndpointLocator;
 
-class Plugin extends BasePlugin
+class WebservicePlugin extends BasePlugin
 {
     /**
      * Disable routes hook.

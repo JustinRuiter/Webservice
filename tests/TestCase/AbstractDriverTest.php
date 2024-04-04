@@ -7,7 +7,7 @@ use Cake\Http\Client;
 use Cake\TestSuite\TestCase;
 use SomeVendor\SomePlugin\Webservice\Driver\SomePlugin;
 use StdClass;
-use TestApp\Webservice\Driver\TestDriver;
+use TestApp\Webservice\Driver\Test;
 use TestApp\Webservice\Logger;
 use TestApp\Webservice\TestWebservice;
 use TestPlugin\Webservice\Driver\TestPlugin;
@@ -40,7 +40,7 @@ class AbstractDriverTest extends TestCase
     {
         $client = new StdClass();
 
-        $driver = new TestDriver();
+        $driver = new Test();
         $driver->setClient($client);
 
         $this->assertSame($client, $driver->getClient());
@@ -48,7 +48,7 @@ class AbstractDriverTest extends TestCase
 
     public function testEnableQueryLogging()
     {
-        $driver = new TestDriver();
+        $driver = new Test();
         $driver->enableQueryLogging();
 
         $this->assertTrue($driver->isQueryLoggingEnabled());
@@ -56,7 +56,7 @@ class AbstractDriverTest extends TestCase
 
     public function testDisableQueryLogging()
     {
-        $driver = new TestDriver();
+        $driver = new Test();
         $driver->disableQueryLogging();
 
         $this->assertFalse($driver->isQueryLoggingEnabled());
@@ -74,7 +74,7 @@ class AbstractDriverTest extends TestCase
             'webservices' => ['example'],
         ];
 
-        $driver = new TestDriver();
+        $driver = new Test();
         $driver->setLogger($logger);
         $driver
             ->setClient($client)

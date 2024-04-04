@@ -8,7 +8,6 @@ use Cake\Datasource\ConnectionInterface;
 use Muffin\Webservice\Datasource\Exception\MissingConnectionException;
 use Muffin\Webservice\Webservice\Driver\AbstractDriver;
 use Muffin\Webservice\Webservice\Exception\MissingDriverException;
-use Muffin\Webservice\Webservice\Exception\UnexpectedDriverException;
 use Psr\SimpleCache\CacheInterface;
 
 /**
@@ -50,9 +49,10 @@ class Connection implements ConnectionInterface
 
         $tempDriver = new $driver($config);
 
-        if (!($tempDriver instanceof AbstractDriver)) {
-            throw new UnexpectedDriverException(['driver' => $driver]);
-        }
+        assert(
+            $tempDriver instanceof AbstractDriver,
+            '`$config[\'driver\']` must be an instance of `' . AbstractDriver::class . '`.'
+        );
         $this->_driver = $tempDriver;
     }
 
@@ -121,7 +121,7 @@ class Connection implements ConnectionInterface
                 throw new MissingConnectionException(['name' => $config['name']]);
             }
 
-            $config['driver'] = App::className($config['service'], 'Webservice/Driver', 'Driver');
+            $config['driver'] = App::className($config['service'], 'Webservice/Driver');
             if (!$config['driver']) {
                 throw new MissingDriverException(['driver' => $config['driver']]);
             }

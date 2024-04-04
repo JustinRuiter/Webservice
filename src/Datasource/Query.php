@@ -380,9 +380,11 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      */
     public function setRepository(RepositoryInterface $repository): Query
     {
-        if ($repository instanceof Endpoint) {
-            $this->_endpoint = $repository;
-        }
+        assert(
+            $repository instanceof Endpoint,
+            '`$repository` must be an instance of `' . Endpoint::class . '`.'
+        );
+        $this->_endpoint = $repository;
 
         return $this;
     }
@@ -391,9 +393,9 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      * Returns the default repository object that will be used by this query,
      * that is, the table that will appear in the from clause.
      *
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return \Muffin\Webservice\Model\Endpoint
      */
-    public function getRepository(): RepositoryInterface
+    public function getRepository(): Endpoint
     {
         return $this->_endpoint;
     }
@@ -513,10 +515,32 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     }
 
     /**
+     * Apply custom finds to against an existing query object.
+     *
+     * Allows custom find methods to be combined and applied to each other.
+     *
+     * ```
+     * $repository->find('all')->find('recent');
+     * ```
+     *
+     * The above is an example of stacking multiple finder methods onto
+     * a single query.
+     *
+     * @param string $finder The finder method to use.
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
+     * @return static Returns a modified query.
+     * @psalm-suppress MoreSpecificReturnType Couldn't get it to work with the interface and has no impact **/
+    public function find(string $finder, mixed ...$args): static
+    {
+        /** @psalm-suppress LessSpecificReturnStatement Couldn't get it to work with the interface and has no impact **/
+        return $this->_endpoint->callFinder($finder, $this, $args); /* @phpstan-ignore-line */
+    }
+
+    /**
      * Get the first result from the executing query or raise an exception.
      *
      * @return mixed The first result from the ResultSet.
-     * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException|\Exception When there is no first record.
      */
     public function firstOrFail(): mixed
     {
@@ -668,7 +692,7 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
     /**
      * @inheritDoc
      */
-    public function offset(?int $offset): Query|QueryInterface
+    public function offset(?int $offset): QueryInterface
     {
         $this->_parts['offset'] = $offset;
 
@@ -1092,27 +1116,5 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
         $this->_formatters[] = $formatter;
 
         return $this;
-    }
-
-    /**
-     * Apply custom finds to against an existing query object.
-     *
-     * Allows custom find methods to be combined and applied to each other.
-     *
-     * ```
-     * $repository->find('all')->find('recent');
-     * ```
-     *
-     * The above is an example of stacking multiple finder methods onto
-     * a single query.
-     *
-     * @param string $finder The finder method to use.
-     * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return static Returns a modified query.
-     * @psalm-suppress MoreSpecificReturnType Couldn't get it to work with the interface and has no impact **/
-    public function find(string $finder, mixed ...$args): static
-    {
-        /** @psalm-suppress LessSpecificReturnStatement Couldn't get it to work with the interface and has no impact **/
-        return $this->_endpoint->callFinder($finder, $this, $args); /* @phpstan-ignore-line */
     }
 }

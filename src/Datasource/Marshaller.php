@@ -109,21 +109,25 @@ class Marshaller
         if (!$options['validate']) {
             return [];
         }
+
+        $validator = null;
         if ($options['validate'] === true) {
-            $options['validate'] = $this->_endpoint->getValidator('default');
+            $validator = $this->_endpoint->getValidator('default');
+        } elseif (is_string($options['validate'])) {
+            $validator = $this->_endpoint->getValidator($options['validate']);
+        } else {
+            /** @var \Cake\Validation\Validator $validator */
+            $validator = $options['validator'];
         }
 
-        if (is_string($options['validate'])) {
-            $options['validate'] = $this->_endpoint->getValidator($options['validate']);
-        }
-        if (!is_object($options['validate'])) {
-            throw new RuntimeException(
-                sprintf('validate must be a boolean, a string or an object. Got %s.', gettype($options['validate']))
-            );
+        if (!is_callable([$validator, 'validate'])) {
+            throw new RuntimeException(sprintf(
+                '"validate" must be a boolean, a string or an object with method "errors()". Got %s instead.',
+                gettype($options['validate'])
+            ));
         }
 
-        /* @phpstan-ignore-next-line Magic method */
-        return $options['validate']->validate($data, $isNew);
+        return $validator->validate($data, $isNew);
     }
 
     /**

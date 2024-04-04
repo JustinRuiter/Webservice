@@ -149,6 +149,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      *   passed to it.
      *
      * @param array $config List of options for this endpoint
+     * @throws \Exception
      */
     final public function __construct(array $config = [])
     {
@@ -331,10 +332,15 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
     /**
      * Returns the connection driver.
      *
-     * @return \Muffin\Webservice\Datasource\Connection|null
+     * @return \Muffin\Webservice\Datasource\Connection
      */
-    public function getConnection(): ?Connection
+    public function getConnection(): Connection
     {
+        assert(
+            $this->_connection !== null,
+            'Connection is null, there is no connection to return.'
+        );
+
         return $this->_connection;
     }
 
@@ -371,7 +377,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
     public function getSchema(): ?Schema
     {
         if ($this->_schema === null) {
-            $this->_schema = $this->getWebservice()?->describe($this->getName());
+            $this->_schema = $this->getWebservice()->describe($this->getName());
         }
 
         return $this->_schema;
@@ -385,6 +391,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      *
      * @param string $field The field to check for.
      * @return bool True if the field exists, false if it does not.
+     * @throws \Exception
      */
     public function hasField(string $field): bool
     {
@@ -548,10 +555,8 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
     public function setWebservice(string $alias, WebserviceInterface $webservice): Endpoint
     {
         $connection = $this->getConnection();
-        if ($connection !== null) {
-            $connection->setWebservice($alias, $webservice);
-            $this->_webservice = $connection->getWebservice($alias);
-        }
+        $connection->setWebservice($alias, $webservice);
+        $this->_webservice = $connection->getWebservice($alias);
 
         return $this;
     }
@@ -559,12 +564,14 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
     /**
      * Get this endpoints associated webservice
      *
-     * @return \Muffin\Webservice\Webservice\WebserviceInterface|null
+     * @return \Muffin\Webservice\Webservice\WebserviceInterface
+     * @throws \Exception
      */
-    public function getWebservice(): ?WebserviceInterface
+    public function getWebservice(): WebserviceInterface
     {
+        // If no webservice is found, get it from the connection
         if ($this->_webservice === null) {
-            $this->_webservice = $this->getConnection()?->getWebservice($this->getName());
+            $this->_webservice = $this->getConnection()->getWebservice($this->getName());
         }
 
         return $this->_webservice;
@@ -582,6 +589,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * @param string $type the type of query to perform
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\Datasource\QueryInterface
+     * @throws \Exception
      */
     public function find(string $type = 'all', mixed ...$args): QueryInterface
     {
@@ -748,6 +756,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * @param mixed ...$args Additional arguments for configuring things like caching.
      * @psalm-suppress InvalidReturnType For backwards compatibility. This function can also return array<array-key, mixed>
      * @return \Cake\Datasource\EntityInterface
+     * @throws \Exception
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
     public function get(
@@ -787,7 +796,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
             if ($cacheKey !== null) {
                 $cacheKey = sprintf(
                     'get:%s.%s%s',
-                    $this->getConnection()?->configName() ?? 'None',
+                    $this->getConnection()->configName(),
                     $this->getName(),
                     json_encode($primaryKey)
                 );
@@ -853,9 +862,6 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
     public function query(): Query
     {
         $webservice = $this->getWebservice();
-        if ($webservice === null) {
-            throw new Exception('Webservice not initialized, cannot create query');
-        }
 
         return new Query($webservice, $this);
     }
@@ -871,6 +877,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * @param \Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where() can take.
      * @return int Count Returns the affected rows.
      * @psalm-suppress MoreSpecificImplementedParamType
+     * @throws \Exception
      */
     public function updateAll(Closure|array|string $fields, Closure|array|string|null $conditions): int
     {
@@ -1319,11 +1326,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      */
     public function __debugInfo(): array
     {
-        $connectionName = '';
-        if ($this->getConnection() !== null) {
-            /** @psalm-suppress PossiblyNullReference getConnection cannot be null, as checked before entering this scope **/
-            $connectionName = $this->getConnection()->configName();
-        }
+        $connectionName = $this->getConnection()->configName();
 
         return [
             'registryAlias' => $this->getRegistryAlias(),
