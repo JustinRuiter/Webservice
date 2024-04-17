@@ -7,6 +7,9 @@ use Cake\Datasource\EntityInterface;
 use Cake\Datasource\EntityTrait;
 use Cake\Datasource\InvalidPropertyInterface;
 
+/**
+ * @psalm-consistent-constructor
+ */
 class Resource implements EntityInterface, InvalidPropertyInterface
 {
     use EntityTrait;
@@ -30,7 +33,7 @@ class Resource implements EntityInterface, InvalidPropertyInterface
      * @param array $properties hash of properties to set in this resource
      * @param array $options list of options to use when creating this resource
      */
-    final public function __construct(array $properties = [], array $options = [])
+    public function __construct(array $properties = [], array $options = [])
     {
         $options += [
             'useSetters' => true,

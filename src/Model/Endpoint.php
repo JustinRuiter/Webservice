@@ -39,6 +39,7 @@ use function Cake\Core\namespaceSplit;
  * @package Muffin\Webservice\Model
  * @template TSubject of object
  * @implements \Cake\Event\EventDispatcherInterface<TSubject>
+ * @psalm-consistent-constructor
  */
 class Endpoint implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface
 {
@@ -151,7 +152,7 @@ class Endpoint implements RepositoryInterface, EventListenerInterface, EventDisp
      * @param array $config List of options for this endpoint
      * @throws \Exception
      */
-    final public function __construct(array $config = [])
+    public function __construct(array $config = [])
     {
         if (!empty($config['alias'])) {
             $this->setAlias($config['alias']);
