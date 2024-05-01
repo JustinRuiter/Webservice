@@ -216,7 +216,8 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
             $res = $this->_execute();
 
             if (!is_iterable($res)) {
-                return new ResultSet([], 0);
+                $this->_results = new ResultSet([], 0);
+                return $this->_results;
             }
 
             $results = $this->decorateResults($res);
@@ -236,119 +237,9 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
      */
     public function orderBy(Closure|array|string $fields, bool $overwrite = false): Query
     {
-        if ($overwrite) {
-            $this->_parts['order'] = null;
-        }
-
-        if (is_array($fields) && empty($fields)) {
-            return $this;
-        }
-
-        $this->_parts['order'] ??= new OrderByExpression();
-        $this->_conjugate('order', $fields, '', []);
+        $this->order($fields, $overwrite);
 
         return $this;
-    }
-
-    /**
-     * Helper function used to build conditions by composing QueryExpression objects.
-     *
-     * @param string $part Name of the query part to append the new part to
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $append Expression or builder function to append.
-     *   to append.
-     * @param string $conjunction type of conjunction to be used to operate part
-     * @param array<string, string> $types Associative array of type names used to bind values to query
-     * @return void
-     */
-    protected function _conjugate(
-        string $part,
-        ExpressionInterface|Closure|array|string|null $append,
-        string $conjunction,
-        array $types
-    ): void {
-        /** @var \Cake\Database\Expression\QueryExpression $expression */
-        $expression = $this->_parts[$part] ?: $this->newExpr();
-        if ((is_array($append) && empty($append)) || $append === null) {
-            $this->_parts[$part] = $expression;
-
-            return;
-        }
-
-        if ($append instanceof Closure) {
-            $append = $append($this->newExpr(), $this);
-        }
-
-        if ($expression->getConjunction() === $conjunction) {
-            $expression->add($append, $types);
-        } else {
-            $expression = $this->newExpr()
-                ->setConjunction($conjunction)
-                ->add([$expression, $append], $types);
-        }
-
-        $this->_parts[$part] = $expression;
-        $this->_dirty();
-    }
-
-    /**
-     * Marks a query as dirty, removing any preprocessed information
-     * from in memory caching.
-     *
-     * @return void
-     */
-    protected function _dirty(): void
-    {
-        $this->_dirty = true;
-    }
-
-    /**
-     * Returns a new QueryExpression object. This is a handy function when
-     * building complex queries using a fluent interface. You can also override
-     * this function in subclasses to use a more specialized QueryExpression class
-     * if required.
-     *
-     * You can optionally pass a single raw SQL string or an array or expressions in
-     * any format accepted by \Cake\Database\Expression\QueryExpression:
-     *
-     * ```
-     * $expression = $query->expr(); // Returns an empty expression object
-     * $expression = $query->expr('Table.column = Table2.column'); // Return a raw SQL expression
-     * ```
-     *
-     * @param \Cake\Database\ExpressionInterface|array|string|null $rawExpression A string, array or anything you want wrapped in an expression object
-     * @return \Cake\Database\Expression\QueryExpression
-     */
-    public function newExpr(ExpressionInterface|array|string|null $rawExpression = null): QueryExpression
-    {
-        return $this->expr($rawExpression);
-    }
-
-    /**
-     * Returns a new QueryExpression object. This is a handy function when
-     * building complex queries using a fluent interface. You can also override
-     * this function in subclasses to use a more specialized QueryExpression class
-     * if required.
-     *
-     * You can optionally pass a single raw SQL string or an array or expressions in
-     * any format accepted by \Cake\Database\Expression\QueryExpression:
-     *
-     * ```
-     * $expression = $query->expr(); // Returns an empty expression object
-     * $expression = $query->expr('Table.column = Table2.column'); // Return a raw SQL expression
-     * ```
-     *
-     * @param \Cake\Database\ExpressionInterface|array|string|null $rawExpression A string, array or anything you want wrapped in an expression object
-     * @return \Cake\Database\Expression\QueryExpression
-     */
-    public function expr(ExpressionInterface|array|string|null $rawExpression = null): QueryExpression
-    {
-        $expression = new QueryExpression([], $this->getTypeMap());
-
-        if ($rawExpression !== null) {
-            $expression->add($rawExpression);
-        }
-
-        return $expression;
     }
 
     /**
@@ -581,9 +472,6 @@ class Query implements IteratorAggregate, JsonSerializable, QueryInterface
         array $types = [],
         bool $overwrite = false
     ): Query {
-        if ($overwrite) {
-            $this->_parts['where'] = $conditions;
-        }
         $this->_parts['where'] = !$overwrite ? Hash::merge($this->clause('where'), $conditions) : $conditions;
 
         return $this;
